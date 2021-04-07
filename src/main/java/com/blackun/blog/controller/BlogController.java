@@ -1,7 +1,10 @@
 package com.blackun.blog.controller;
 
+import com.blackun.blog.config.CustomUserDetails;
 import com.blackun.blog.entities.Post;
 import com.blackun.blog.service.PostService;
+import com.blackun.blog.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,9 +16,11 @@ import java.util.List;
 public class BlogController {
 
     private final PostService postService;
+    private final UserService userService;
 
-    public BlogController(PostService postService) {
+    public BlogController(PostService postService, UserService userService) {
         this.postService = postService;
+        this.userService = userService;
     }
 
     @GetMapping(value="/")
@@ -29,7 +34,10 @@ public class BlogController {
     }
 
     @PostMapping(value="/post")
-    public void publishPost(@RequestBody Post post){
+    public String publishPost(@RequestBody Post post){
+        CustomUserDetails userDetails = (CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        post.setCreator(userService.getUser(userDetails.getUsername()));
         postService.insert(post);
+        return "Post was published";
     }
 }

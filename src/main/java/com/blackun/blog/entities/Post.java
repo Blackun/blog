@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.util.Date;
 
 @Data
@@ -19,5 +20,8 @@ public class Post {
     private String title;
     private String body;
     private Date dateCreated;
+
+    @ManyToOne
+    private User creator;
 
 }
